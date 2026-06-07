@@ -5,7 +5,7 @@ import './index.css'
 const projects = [
   { name: "React Product Tool", url: "https://github.com/andinalloldtales/react-product-tool", year: "6/4/2026" },
   { name: "Product Tool API", url: "https://github.com/andinalloldtales/backend-product-tool", year: "6/4/2026" },
-  { name: "SM64 CoopDX Mods", url: "https://github.com/andinalloldtales/sm64-movement-rework", year: "2026" },
+  { name: "AI Research Assistant", url: "https://amsresearch.vercel.app/", year: "6/7/2026" },
 ];
 
 const Doodles = () => {
