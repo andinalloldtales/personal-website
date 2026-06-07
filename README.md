@@ -1,1 +1,1 @@
-My own personal website using React + Vite, and the lovely libraries of GASP and Motion :)
+My own personal website using React + Vite, and the lovely libraries of GASP and Motion :).
