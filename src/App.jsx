@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import './index.css'
 
 const projects = [
+  { name: "Covo | Real-Time Messaging Platform", url: "https://covochat.vercel.app/", year: "6/12/2026", },
   { name: "AI Research Assistant", url: "https://amsresearch.vercel.app/", year: "6/7/2026" },
   { name: "React Product Tool", url: "https://github.com/andinalloldtales/react-product-tool", year: "6/4/2026" },
   { name: "Product Tool API", url: "https://github.com/andinalloldtales/backend-product-tool", year: "6/4/2026" },
