@@ -3,11 +3,10 @@ import { useEffect, useRef } from "react";
 import './index.css'
 
 const projects = [
-  { name: "Covo | Real-Time Messaging Platform", url: "https://covochat.vercel.app/", year: "6/12/2026", },
-  { name: "AI Research Assistant", url: "https://amsresearch.vercel.app/", year: "6/7/2026" },
-  { name: "React Product Tool", url: "https://github.com/andinalloldtales/react-product-tool", year: "6/4/2026" },
-  { name: "Product Tool API", url: "https://github.com/andinalloldtales/backend-product-tool", year: "6/4/2026" },
-  
+  { name: "Covo | Real-Time Messaging Platform", description: "Real-time chat, group rooms, presence", url: "https://covochat.vercel.app/", year: "6/12/2026" },
+  { name: "AI Research Assistant", description: "Agentic web research w/ Llama 4 Scout", url: "https://amsresearch.vercel.app/", year: "6/7/2026" },
+  { name: "React Product Tool", description: "Inventory manager, full CRUD + search", url: "https://github.com/andinalloldtales/react-product-tool", year: "6/4/2026" },
+  { name: "Product Tool API", description: "REST API backend, MongoDB + Mongoose", url: "https://github.com/andinalloldtales/backend-product-tool", year: "6/4/2026" },
 ];
 
 const Doodles = () => {
@@ -45,7 +44,7 @@ const Doodles = () => {
 
   return (
     <svg ref={ref} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0 }} xmlns="http://www.w3.org/2000/svg">
-      
+
       {/* stick figure top left */}
       <circle cx="80" cy="120" r="10" style={sc} />
       <line x1="80" y1="130" x2="80" y2="165" style={s} />
@@ -98,6 +97,51 @@ const Doodles = () => {
   );
 };
 
+const TITLE_LETTERS = ["a", "m", "s"];
+
+const AnimatedTitle = () => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    let raf;
+    const start = () => {
+      if (!window.gsap || !ref.current) { raf = requestAnimationFrame(start); return; }
+      const gsap = window.gsap;
+      const letters = ref.current.querySelectorAll(".letter");
+
+      gsap.set(letters, { opacity: 0, y: 28, rotateZ: -6 });
+      gsap.to(letters, {
+        opacity: 1,
+        y: 0,
+        rotateZ: 0,
+        duration: 0.9,
+        ease: "back.out(1.6)",
+        stagger: 0.08,
+        delay: 0.15,
+      });
+
+      gsap.to(ref.current, {
+        letterSpacing: "1px",
+        duration: 2.6,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true,
+        delay: 1.4,
+      });
+    };
+    start();
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <h1 ref={ref} style={{ fontSize: "48px", fontStyle: "italic", fontWeight: 700, letterSpacing: "-1px", marginBottom: "12px", display: "inline-flex" }}>
+      {TITLE_LETTERS.map((l, i) => (
+        <span key={i} className="letter" style={{ display: "inline-block" }}>{l}</span>
+      ))}
+    </h1>
+  );
+};
+
 export default function App() {
   useEffect(() => {
     const script = document.createElement("script");
@@ -105,45 +149,62 @@ export default function App() {
     script.onload = () => window.dispatchEvent(new Event("gsap-loaded"));
     document.head.appendChild(script);
   }, []);
-//
+
   return (
     <>
       <Doodles />
-      <main style={{ position: "relative", zIndex: 1, background: "transparent", minHeight: "100vh", color: "#fff", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "160px" }}>
+      <main style={{ position: "relative", zIndex: 1, background: "transparent", minHeight: "100vh", color: "#fff", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "160px", paddingBottom: "80px" }}>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-          style={{ textAlign: "center", marginBottom: "60px" }}>
-          <h1 style={{ fontSize: "48px", fontStyle: "italic", fontWeight: 700, letterSpacing: "-1px", marginBottom: "12px" }}>ams</h1>
-          <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-            <a href="https://github.com/andinalloldtales" target="_blank" rel="noreferrer"
+        <div style={{ textAlign: "center", marginBottom: "60px" }}>
+          <AnimatedTitle />
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+            <motion.a href="https://github.com/andinalloldtales" target="_blank" rel="noreferrer"
               style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", textDecoration: "none" }}
-              onMouseEnter={e => e.target.style.color = "#fff"}
-              onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.5)"}>
+              whileHover={{ color: "#fff", letterSpacing: "0.5px" }}
+              transition={{ duration: 0.25 }}>
               github
-            </a>
-            {/*<a href="https://linkedin.com/in/" target="_blank" rel="noreferrer"
-              style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", textDecoration: "none" }}
-              onMouseEnter={e => e.target.style.color = "#fff"}
-              onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.5)"}>
-              linkedin
-            </a>*/}
-          </div>
-        </motion.div>
-
-        <div style={{ width: "100%", maxWidth: "500px", padding: "0 24px" }}>
-          {projects.map((p, i) => (
-            <motion.a key={p.name} href={p.url} target="_blank" rel="noreferrer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-              style={{ display: "flex", justifyContent: "space-between", padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,0.07)", textDecoration: "none", color: "rgba(255,255,255,0.7)", fontSize: "14px" }}
-              whileHover={{ color: "#fff", x: 4 }}
-            >
-              <span>{p.name}</span>
-              <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>{p.year}</span>
             </motion.a>
-          ))}
+          </motion.div>
         </div>
+
+        <motion.div
+          style={{ width: "100%", maxWidth: "560px", padding: "0 24px" }}
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: 0.12, delayChildren: 0.9 } },
+          }}
+        >
+          {projects.map((p) => (
+            <motion.div key={p.name}
+              variants={{
+                hidden: { opacity: 0, y: 22 },
+                show: { opacity: 1, y: 0 },
+              }}
+              transition={{ type: "spring", stiffness: 260, damping: 22 }}
+              whileHover={{ x: 4 }}
+              style={{ padding: "18px 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                <motion.a href={p.url} target="_blank" rel="noreferrer"
+                  style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", textDecoration: "none", backgroundImage: "linear-gradient(currentColor, currentColor)", backgroundSize: "0% 1px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", paddingBottom: "2px" }}
+                  whileHover={{ backgroundSize: "100% 1px", color: "#fff" }}
+                  transition={{ duration: 0.3 }}>
+                  {p.name}
+                </motion.a>
+                <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px", flexShrink: 0, marginLeft: "16px" }}>{p.year}</span>
+              </div>
+              <div style={{ fontSize: "11.5px", color: "rgba(255,255,255,0.32)", marginTop: "3px" }}>
+                {p.description}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </main>
     </>
   );
