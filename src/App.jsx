@@ -4,6 +4,7 @@ import './index.css'
 
 const projects = [
   { name: "Covo | Real-Time Messaging Platform", description: "Real-time chat, group rooms, presence", url: "https://covochat.vercel.app/", year: "6/12/2026" },
+  { name: "Filter Feed", description: "Chrome extension that filters LinkedIn job listings", url: "https://github.com/andinalloldtales/filter-feed/tree/main", year: "6/24/2026" },
   { name: "AI Research Assistant", description: "Agentic web research w/ Llama 4 Scout", url: "https://amsresearch.vercel.app/", year: "6/7/2026" },
   { name: "React Product Tool", description: "Inventory manager, full CRUD + search", url: "https://github.com/andinalloldtales/react-product-tool", year: "6/4/2026" },
   { name: "Product Tool API", description: "REST API backend, MongoDB + Mongoose", url: "https://github.com/andinalloldtales/backend-product-tool", year: "6/4/2026" },
