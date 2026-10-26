@@ -97,19 +97,42 @@ h1 {
   font: inherit;
   letter-spacing: inherit;
   text-decoration: none;
-  text-underline-offset: 0.16em;
   cursor: pointer;
 }
 
-.tagline button:hover,
-.tagline button:focus-visible {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
+.tagline a.poster,
+.tagline a.poster:visited,
+.tagline a.poster:hover,
+.tagline a.poster:active {
+  color: inherit;
+  text-decoration: none;
 }
 
-.tagline button:focus-visible {
+.poster {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.poster::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 -0.2em;
+}
+
+.poster:focus-visible {
   outline: 1px solid #000;
   outline-offset: 4px;
+}
+
+.poster-line {
+  position: absolute;
+  left: 0;
+  bottom: -0.1em;
+  height: 1px;
+  width: 0;
+  background: currentColor;
+  pointer-events: none;
 }
 
 .chevron {

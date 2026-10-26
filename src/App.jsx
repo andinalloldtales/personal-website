@@ -16,6 +16,99 @@ function easeOutQuint(t) {
   return 1 - (1 - t) ** 5;
 }
 
+function easeInOutQuad(t) {
+  return t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2;
+}
+
+function PosterUnderline({
+  as: Tag = "span",
+  className,
+  children,
+  onMouseEnter,
+  onMouseLeave,
+  onFocus,
+  onBlur,
+  ...rest
+}) {
+  const lineRef = useRef(null);
+  const running = useRef(null);
+  const progress = useRef(0);
+  const hot = useRef({ hover: false, focus: false });
+
+  const paint = (value) => {
+    progress.current = value;
+    const line = lineRef.current;
+    if (!line) return;
+    const full = line.parentElement.getBoundingClientRect().width;
+    const scale = window.devicePixelRatio || 1;
+    line.style.width = `${Math.round(full * value * scale) / scale}px`;
+  };
+
+  const animateTo = (target) => {
+    if (running.current) clearInterval(running.current);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      paint(target);
+      return;
+    }
+    const from = progress.current;
+    if (Math.abs(from - target) < 0.001) {
+      paint(target);
+      return;
+    }
+    let frame = 0;
+    running.current = setInterval(() => {
+      frame += 1;
+      const t = Math.min(1, frame / FRAMES);
+      paint(from + (target - from) * easeInOutQuad(t));
+      if (t >= 1) {
+        clearInterval(running.current);
+        running.current = null;
+        paint(target);
+      }
+    }, FRAME_MS);
+  };
+
+  useEffect(
+    () => () => {
+      if (running.current) clearInterval(running.current);
+    },
+    [],
+  );
+
+  const sync = () => animateTo(hot.current.hover || hot.current.focus ? 1 : 0);
+
+  return (
+    <Tag
+      {...rest}
+      className={className ? `poster ${className}` : "poster"}
+      onMouseEnter={(event) => {
+        hot.current.hover = true;
+        sync();
+        onMouseEnter?.(event);
+      }}
+      onMouseLeave={(event) => {
+        hot.current.hover = false;
+        sync();
+        onMouseLeave?.(event);
+      }}
+      onFocus={(event) => {
+        hot.current.focus = true;
+        sync();
+        onFocus?.(event);
+      }}
+      onBlur={(event) => {
+        hot.current.focus = false;
+        sync();
+        onBlur?.(event);
+      }}
+    >
+      {children}
+      <span ref={lineRef} className="poster-line" aria-hidden="true" />
+    </Tag>
+  );
+}
+
 export default function App() {
   const [open, setOpen] = useState(false);
   const [age, setAge] = useState(() => ageFrom(new Date()));
@@ -91,10 +184,15 @@ export default function App() {
       <p className="tagline">
         <span>{age}</span>
         <span>no degree</span>
-        <span>founder @ covo</span>
-        <button type="button" aria-expanded={open} onClick={toggle}>
+        <span>
+          founder @{" "}
+          <PosterUnderline as="a" className="covo" href="https://covochat.vercel.app/">
+            covo
+          </PosterUnderline>
+        </span>
+        <PosterUnderline as="button" type="button" aria-expanded={open} onClick={toggle}>
           about <span ref={chevronRef} className="chevron">›</span>
-        </button>
+        </PosterUnderline>
       </p>
 
       <div ref={panelRef} className="about-panel" aria-hidden={!open}>
