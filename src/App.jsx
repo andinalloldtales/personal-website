@@ -91,7 +91,7 @@ export default function App() {
       <p className="tagline">
         <span>{age}</span>
         <span>no degree</span>
-        <span>self employed swe</span>
+        <span>founder @ covo</span>
         <button type="button" aria-expanded={open} onClick={toggle}>
           about <span ref={chevronRef} className="chevron">›</span>
         </button>
