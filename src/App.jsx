@@ -24,6 +24,9 @@ function PosterUnderline({
   as: Tag = "span",
   className,
   children,
+  held = false,
+  heldRef,
+  onClick,
   onMouseEnter,
   onMouseLeave,
   ...rest
@@ -31,7 +34,9 @@ function PosterUnderline({
   const lineRef = useRef(null);
   const running = useRef(null);
   const progress = useRef(0);
+  const targetRef = useRef(0);
   const hovering = useRef(false);
+  const syncRef = useRef(() => {});
 
   const paint = (value) => {
     progress.current = value;
@@ -60,17 +65,17 @@ function PosterUnderline({
   };
 
   const animateTo = (target) => {
+    const arrived = Math.abs(progress.current - target) < 0.001;
+    if (targetRef.current === target && (running.current || arrived)) return;
+    targetRef.current = target;
     if (running.current) clearInterval(running.current);
+    running.current = null;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    if (reduce || arrived) {
       paint(target);
       return;
     }
     const from = progress.current;
-    if (Math.abs(from - target) < 0.001) {
-      paint(target);
-      return;
-    }
     let frame = 0;
     running.current = setInterval(() => {
       frame += 1;
@@ -91,12 +96,21 @@ function PosterUnderline({
     [],
   );
 
-  const sync = () => animateTo(hovering.current ? 1 : 0);
+  const sync = () => animateTo(hovering.current || Boolean(heldRef?.current) ? 1 : 0);
+  syncRef.current = sync;
+
+  useEffect(() => {
+    syncRef.current();
+  }, [held]);
 
   return (
     <Tag
       {...rest}
       className={className ? `poster ${className}` : "poster"}
+      onClick={(event) => {
+        onClick?.(event);
+        sync();
+      }}
       onMouseEnter={(event) => {
         hovering.current = true;
         sync();
@@ -116,6 +130,7 @@ function PosterUnderline({
 
 export default function App() {
   const [open, setOpen] = useState(false);
+  const openRef = useRef(false);
   const [age, setAge] = useState(() => ageFrom(new Date()));
   const panelRef = useRef(null);
   const innerRef = useRef(null);
@@ -151,7 +166,8 @@ export default function App() {
     if (running.current) clearInterval(running.current);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const panel = panelRef.current;
-    const next = !open;
+    const next = !openRef.current;
+    openRef.current = next;
     setOpen(next);
     const height = measure();
 
@@ -195,7 +211,14 @@ export default function App() {
             covo
           </PosterUnderline>
         </span>
-        <PosterUnderline as="button" type="button" aria-expanded={open} onClick={toggle}>
+        <PosterUnderline
+          as="button"
+          type="button"
+          aria-expanded={open}
+          held={open}
+          heldRef={openRef}
+          onClick={toggle}
+        >
           about <span ref={chevronRef} className="chevron">›</span>
         </PosterUnderline>
       </p>
