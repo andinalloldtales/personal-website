@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Unused local cuts. Regular Didot.otf is loaded by the page.
+Didot Bold.otf
+Didot Italic.otf
+Didot Title.otf
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
