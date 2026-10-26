@@ -128,10 +128,10 @@ h1 {
 .poster-line {
   position: absolute;
   left: 0;
-  bottom: -0.1em;
-  height: 1px;
+  top: calc(100% + 0.08em);
+  height: 1.5px;
   width: 0;
-  background: currentColor;
+  background: #000;
   pointer-events: none;
 }
 

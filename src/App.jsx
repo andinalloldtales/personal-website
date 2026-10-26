@@ -26,22 +26,37 @@ function PosterUnderline({
   children,
   onMouseEnter,
   onMouseLeave,
-  onFocus,
-  onBlur,
   ...rest
 }) {
   const lineRef = useRef(null);
   const running = useRef(null);
   const progress = useRef(0);
-  const hot = useRef({ hover: false, focus: false });
+  const hovering = useRef(false);
 
   const paint = (value) => {
     progress.current = value;
     const line = lineRef.current;
     if (!line) return;
-    const full = line.parentElement.getBoundingClientRect().width;
+    const parent = line.parentElement;
     const scale = window.devicePixelRatio || 1;
-    line.style.width = `${Math.round(full * value * scale) / scale}px`;
+    const rect = parent.getBoundingClientRect();
+    const fontSize = parseFloat(getComputedStyle(parent).fontSize) || 16;
+    const thickness = Math.round(1.5 * scale) / scale;
+    const text = [...parent.childNodes].find((node) => node.nodeType === 3 && node.textContent.trim());
+    let anchor = rect.bottom;
+    if (text) {
+      const range = document.createRange();
+      range.selectNodeContents(text);
+      anchor = range.getBoundingClientRect().bottom;
+    }
+    const snapped = Math.round((anchor + fontSize * 0.07) * scale) / scale;
+    line.style.transform = "";
+    line.style.top = `${snapped - rect.top}px`;
+    line.style.height = `${thickness}px`;
+    const placed = line.getBoundingClientRect().top;
+    const correction = Math.round(placed * scale) / scale - placed;
+    if (Math.abs(correction) > 0.01) line.style.transform = `translateY(${correction}px)`;
+    line.style.width = `${Math.round(rect.width * value * scale) / scale}px`;
   };
 
   const animateTo = (target) => {
@@ -76,31 +91,21 @@ function PosterUnderline({
     [],
   );
 
-  const sync = () => animateTo(hot.current.hover || hot.current.focus ? 1 : 0);
+  const sync = () => animateTo(hovering.current ? 1 : 0);
 
   return (
     <Tag
       {...rest}
       className={className ? `poster ${className}` : "poster"}
       onMouseEnter={(event) => {
-        hot.current.hover = true;
+        hovering.current = true;
         sync();
         onMouseEnter?.(event);
       }}
       onMouseLeave={(event) => {
-        hot.current.hover = false;
+        hovering.current = false;
         sync();
         onMouseLeave?.(event);
-      }}
-      onFocus={(event) => {
-        hot.current.focus = true;
-        sync();
-        onFocus?.(event);
-      }}
-      onBlur={(event) => {
-        hot.current.focus = false;
-        sync();
-        onBlur?.(event);
       }}
     >
       {children}
