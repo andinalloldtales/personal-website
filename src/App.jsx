@@ -207,7 +207,13 @@ export default function App() {
         <span>no degree</span>
         <span>
           founder @{" "}
-          <PosterUnderline as="a" className="covo" href="https://covochat.vercel.app/">
+          <PosterUnderline
+            as="a"
+            className="covo"
+            href="https://covochat.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             covo
           </PosterUnderline>
         </span>
